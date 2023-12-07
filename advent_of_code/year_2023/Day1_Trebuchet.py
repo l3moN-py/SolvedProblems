@@ -29,25 +29,33 @@ def partTwo():
     numbers = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
 
     for lineIndex in range(len(loadedData)):
-        front = []
-        back = []
+        line = loadedData[lineIndex]
+
+        mostRecentNumberPosition = (len(line), "none")
+
         for num in numbers:
-            front.append([num, loadedData[lineIndex].find(num)])
-            back.append([num, loadedData[lineIndex][::-1].find(num[::-1])])
+            foundNumber = line.find(num)
+            if foundNumber != -1 and foundNumber < mostRecentNumberPosition[0]:
+                mostRecentNumberPosition = (foundNumber, str(num))
 
-        front = list(filter(lambda x: x[1] != -1, front))
-        front.sort(key=lambda x: x[1])
-        if front:
-            frontNumber = front[0]
-            loadedData[lineIndex] = loadedData[lineIndex][:(frontNumber[1]+len(frontNumber[0]))].replace(frontNumber[0], str(numbers.index(frontNumber[0]) + 1)) + loadedData[lineIndex][(frontNumber[1]+len(frontNumber[0])):]
+        letter = mostRecentNumberPosition[1]
 
-        back = list(filter(lambda x: x[1] != -1, back))
-        back.sort(key=lambda x: x[1])
-        if back:
-            backNumber = back[0]
-            loadedData[lineIndex] = loadedData[lineIndex][::-1].replace(backNumber[0][::-1], str(numbers.index(backNumber[0])+1))[::-1]
+        mostRecentNumberPosition = (len(line), "none")
 
-    print(loadedData)
+        for num in numbers:
+            num = num[::-1]
+            foundNumber = line[::-1].find(num)
+            if foundNumber != -1 and foundNumber < mostRecentNumberPosition[0]:
+                mostRecentNumberPosition = (foundNumber, num)
+
+        letter2 = mostRecentNumberPosition[1]
+
+        start = line.replace(letter, str(numbers.index(str(letter)) + 1)) if letter != "none" else line
+        end = line[::-1].replace(letter2, str(numbers.index(str(letter2[::-1])) + 1))[::-1] if letter2 != "none" else line
+
+        loadedData[lineIndex] = start + end
+
+
 
     return calculate(loadedData)
 
